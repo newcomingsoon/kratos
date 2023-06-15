@@ -19,6 +19,13 @@ const (
 	penalty = uint64(time.Second * 10)
 )
 
+// 这个node的实现，通过自定义规则来计算node的权重
+// 不是简单初始化配置的，这样是为何将WeightedNode设计成接口的形式
+// Node可以自定义实现weight的获取方式
+// 接口的使用，不就是这样的么， 我定义好能操作的方法对外，内部如何实现，由具体实现者自身来决定
+
+// 这个weight的计算暂时还没看懂，列个todo吧
+// TODO: for me
 var (
 	_ selector.WeightedNode        = &node{}
 	_ selector.WeightedNodeBuilder = &Builder{}

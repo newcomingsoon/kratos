@@ -14,7 +14,9 @@ import (
 )
 
 type discoveryResolver struct {
-	w   registry.Watcher
+	// 注册中心的watcher接口
+	w registry.Watcher
+	// resover 的回调接口统计更新
 	cc  resolver.ClientConn
 	log *log.Helper
 

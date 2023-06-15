@@ -22,6 +22,7 @@ type node struct {
 	selector.Node
 
 	// last lastPick timestamp
+	// 更新本次选中的时间
 	lastPick int64
 }
 
@@ -47,6 +48,7 @@ func (n *node) Weight() float64 {
 	return defaultWeight
 }
 
+// 计算上次该节点被选中经过了多长时间点
 func (n *node) PickElapsed() time.Duration {
 	return time.Duration(time.Now().UnixNano() - atomic.LoadInt64(&n.lastPick))
 }

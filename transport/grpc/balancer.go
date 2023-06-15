@@ -25,6 +25,8 @@ var (
 
 func init() {
 	// inject global grpc balancer
+	// 注册全局的balaner： 这个注册不是线程安全的，所以通过在init中执行
+	// 负载均衡策略有： 随机， 权重
 	SetGlobalBalancer(random.Name, random.NewBuilder())
 	SetGlobalBalancer(wrr.Name, wrr.NewBuilder())
 	SetGlobalBalancer(p2c.Name, p2c.NewBuilder())

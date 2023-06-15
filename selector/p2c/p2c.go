@@ -11,10 +11,17 @@ import (
 )
 
 const (
+	//
 	forcePick = time.Second * 3
 	// Name is balancer name
 	Name = "p2c"
 )
+
+// 实现原理： 随机挑选两个node(n1,n2)
+// 在挑选的两个node（n1,n2）中
+// 一般情况下：选择权重大的那一个, 假设为n2， 那n1则为未被选中，直接返回n2，并退出
+// 特殊情况：如果n1距离上次被选中超过了一定时间间隔（forcePick的定义）
+// 那么强制选择该节点（n1），放弃之前选择的权重大的节点（n2）， 并返回n1，然后退出
 
 var _ selector.Balancer = &Balancer{}
 
@@ -40,11 +47,13 @@ func New(opts ...Option) selector.Selector {
 
 // Balancer is p2c selector.
 type Balancer struct {
-	r  *rand.Rand
+	r *rand.Rand
+	// 用CAS来充当锁
 	lk int64
 }
 
 // choose two distinct nodes.
+// 预筛选两个不同的node
 func (s *Balancer) prePick(nodes []selector.WeightedNode) (nodeA selector.WeightedNode, nodeB selector.WeightedNode) {
 	a := s.r.Intn(len(nodes))
 	b := s.r.Intn(len(nodes) - 1)
@@ -67,6 +76,9 @@ func (s *Balancer) Pick(ctx context.Context, nodes []selector.WeightedNode) (sel
 	var pc, upc selector.WeightedNode
 	nodeA, nodeB := s.prePick(nodes)
 	// meta.Weight为服务发布者在discovery中设置的权重
+	// 从预选中进一步判断权重大小
+	// pc： 权重大的，要当选的节点
+	// upc： 权重小的，本次落选的
 	if nodeB.Weight() > nodeA.Weight() {
 		pc, upc = nodeB, nodeA
 	} else {

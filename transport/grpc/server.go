@@ -90,6 +90,7 @@ func Options(opts ...grpc.ServerOption) ServerOption {
 }
 
 // Server is a gRPC server wrapper.
+// 自定义Server， 通过封装grpc.Server构造新的Server
 type Server struct {
 	*grpc.Server
 	baseCtx    context.Context
@@ -148,7 +149,8 @@ func NewServer(opts ...ServerOption) *Server {
 
 // Endpoint return a real address to registry endpoint.
 // examples:
-//   grpc://127.0.0.1:9000?isSecure=false
+//
+//	grpc://127.0.0.1:9000?isSecure=false
 func (s *Server) Endpoint() (*url.URL, error) {
 	s.once.Do(func() {
 		lis, err := net.Listen(s.network, s.address)
@@ -190,6 +192,11 @@ func (s *Server) Stop(ctx context.Context) error {
 	return nil
 }
 
+// 可以简单理解为函数嵌套的调用
+// 该方法返回一个嵌套的函数
+// f = f1(f2(f3())) ,  当最终f调用时，会先执行f中的一些逻辑，然后执行到f1,
+// 继续执行f2,f3，直到最后一次调用结束
+// 这是函数作为一等公民的好处，可以直接返回一个函数或者将函数作为参数传递给函数
 func (s *Server) unaryServerInterceptor() grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 		ctx, cancel := ic.Merge(ctx, s.baseCtx)

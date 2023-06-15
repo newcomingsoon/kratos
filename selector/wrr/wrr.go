@@ -10,6 +10,7 @@ import (
 
 const (
 	// Name is wrr balancer name
+	// 加权轮询
 	Name = "wrr"
 )
 

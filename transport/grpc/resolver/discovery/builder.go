@@ -68,6 +68,8 @@ func (b *builder) Build(target resolver.Target, cc resolver.ClientConn, opts res
 		w, err = b.discoverer.Watch(ctx, target.Endpoint)
 		close(done)
 	}()
+
+	// 等待watcher返回， 超过时间直接返回错误
 	select {
 	case <-done:
 	case <-time.After(b.timeout):

@@ -13,6 +13,7 @@ import (
 )
 
 // Server is transport server.
+// 服务端接口定义， 包含开启和关闭一个服务
 type Server interface {
 	Start(context.Context) error
 	Stop(context.Context) error
@@ -31,6 +32,11 @@ type Header interface {
 }
 
 // Transporter is transport context value interface.
+// 将客户端和服务端的Trasporter通过context来传递
+// 接口定义的原理：
+// 1. 接口定义了有哪些可调用的操作方法
+// 2. 操作方法的参数：是在该方法被调用时通过外部传递的，接口具体实现者就拥有该参数的具体内容，可以操作它了
+// 3. 操作方法的返回值：表示调用该操作可以得到该接口内部具体实现者已经有的哪些数据
 type Transporter interface {
 	// Kind transporter
 	// grpc
