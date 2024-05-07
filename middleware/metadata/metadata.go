@@ -53,12 +53,14 @@ func Server(opts ...Option) middleware.Middleware {
 		return func(ctx context.Context, req interface{}) (reply interface{}, err error) {
 			if tr, ok := transport.FromServerContext(ctx); ok {
 				md := options.md.Clone()
+				// 获取server中ctx中已存在的metadata
 				header := tr.RequestHeader()
 				for _, k := range header.Keys() {
 					if options.hasPrefix(k) {
 						md.Set(k, header.Get(k))
 					}
 				}
+				// 这个时候其实就注入了一些信息到ctx中， 后续handler就可以拿到了
 				ctx = metadata.NewServerContext(ctx, md)
 			}
 			return handler(ctx, req)

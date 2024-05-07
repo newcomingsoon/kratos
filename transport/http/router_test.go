@@ -74,6 +74,7 @@ func TestRoute(t *testing.T) {
 			return err
 		}
 		h := ctx.Middleware(func(ctx context.Context, in interface{}) (interface{}, error) {
+			log.Println("ctx middleware:", in)
 			return u, nil
 		})
 		return ctx.Returns(h(ctx, u))

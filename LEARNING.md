@@ -1,5 +1,16 @@
 # LEARNING
 
+## metadata
+
+通过区分server和client的传入context中的数据，定义一些操作context中数据的方法
+
+## middleware
+
+### 1. metadata
+一般context中的数据都是在中间件中注入的
+server读取client中带来的数据
+client初始化化一些数据，请求带给server
+
 ## Transport
 
 ### 1. gRPC
@@ -22,5 +33,11 @@ resolver 通过接入注册中心，来获取服务有效的endpoint，最后注
 
 ### 2. Http
 
+### binding
 
+通过将proto.message中定义的字段，映射到URL中定义placeholder中
+
+### status
+
+http返回Code和grpc返回code的映射，它们之间可以相互装换
  
